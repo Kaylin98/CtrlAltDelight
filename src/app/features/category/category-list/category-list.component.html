@@ -6,8 +6,8 @@
       <a [routerLink]="['/admin/categories/add']" class="btn btn-primary">Add Category</a>
     </div>
 
-    <ng-container *ngIf="categories">
-      <table class="table table-border mt-3">
+    <ng-container *ngIf="categories$ | async as categories">
+      <table class="table mt-3">
         <thead>
           <tr>
             <th>Id</th>

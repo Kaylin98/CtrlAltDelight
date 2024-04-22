@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { Category } from '../models/category.model';
 import { CategoryService } from './../services/category.service';
 import { Component, OnDestroy, OnInit } from '@angular/core';
@@ -7,9 +8,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
   templateUrl: './category-list.component.html',
   styleUrls: ['./category-list.component.css']
 })
-export class CategoryListComponent implements OnInit,OnDestroy {
+export class CategoryListComponent implements OnInit {
 
-  categories?: Category[];
+  categories$?: Observable<Category[]>;
 
   constructor(private categoryService: CategoryService){
   }
@@ -17,15 +18,8 @@ export class CategoryListComponent implements OnInit,OnDestroy {
 
 
   ngOnInit(): void {
-    this.categoryService.getAllCategories()
-    .subscribe({
-      next: (response) =>{
-        this.categories = response;
-      }
-    });
+    this.categories$ = this.categoryService.getAllCategories();
   }
-  ngOnDestroy(): void {
-    throw new Error('Method not implemented.');
-  }
+
   
 }
