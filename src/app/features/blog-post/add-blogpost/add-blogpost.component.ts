@@ -1,25 +1,31 @@
 import { CategoryService } from './../../category/services/category.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AddBlogPost } from '../models/add-blog-post.model';
 import { Router } from '@angular/router';
 import { BlogPostService } from '../services/blog-post.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Category } from '../../category/models/category.model';
+import { ImageService } from 'src/app/shared/components/image-selector/image.service';
 
 @Component({
   selector: 'app-add-blogpost',
   templateUrl: './add-blogpost.component.html',
   styleUrls: ['./add-blogpost.component.css']
 })
-export class AddBlogpostComponent implements OnInit{
+export class AddBlogpostComponent implements OnInit, OnDestroy{
   model: AddBlogPost;
+  isImageSelectorVisible: boolean = false;
 
   categories$?: Observable<Category[]>;
+  imageSelectSubscricption?: Subscription;
+
 
   constructor(private blogPostService: BlogPostService,
     private categoryService: CategoryService,
-    private router: Router) {
-    this.model = {
+    private router: Router,
+    private imageService:ImageService) {
+    
+      this.model = {
       title: '',
       shortDescription: '',
       urlHandle: '',
@@ -30,9 +36,21 @@ export class AddBlogpostComponent implements OnInit{
       publishedDate: new Date(),
       categories: []
     }
+  
   }
+
   ngOnInit(): void {
     this.categories$ = this.categoryService.getAllCategories();
+
+    this.imageSelectSubscricption = this.imageService.onSelectImage()
+    .subscribe({
+      next: (response) =>{
+        if (this.model) {
+          this.model.featuredImageUrl = response.url;
+          this.closeImageSelector();
+        }
+      }
+    });
   }
 
   onFormSubmit(): void {
@@ -43,4 +61,15 @@ export class AddBlogpostComponent implements OnInit{
       }
     });
   }
+
+  openImageSelector(): void {
+    this.isImageSelectorVisible = true;
+  }
+
+  closeImageSelector(): void{
+    this.isImageSelectorVisible = false;
+  }
+
+  ngOnDestroy(): void {
+    this.imageSelectSubscricption?.unsubscribe();  }
 }
