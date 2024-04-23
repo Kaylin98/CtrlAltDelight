@@ -30,7 +30,7 @@ export class BlogPostService {
   }
 
   deleteBlogPost(id: string) : Observable<BlogPost> {
-    return this.http.delete<BlogPost>(`${environment.apiBaseUrl}/api/Categories/${id}`)
+    return this.http.delete<BlogPost>(`${environment.apiBaseUrl}/api/blogposts/${id}`)
   }
 }
 
